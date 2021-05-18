@@ -10,7 +10,7 @@ list_keywords  = open('scripts\keywords.txt', encoding='UTF-8').read().splitline
 forbidden_file = open('forbidden-urls.txt', 'a')
 iterator       = 0
 url_number     = 0
-max_scrape     = 5
+max_scrape     = 0
 occurrences    = 0
 row            = 2
 
@@ -20,11 +20,12 @@ obj_sheet = Workbook()
 sheet     = obj_sheet.active
 ns        = Sheet('Planilha de Ocorrencias', 'sheet', obj_sheet, sheet)
 ns.set_header1()
+ns.save_sheet()
 
 for url in list_urls:
 
-    if iterator >= max_scrape:
-        break
+    # if iterator >= max_scrape:
+    #     break
 
     if en.set_delay(url):
         delay = random.randint(0, 13)
@@ -63,6 +64,8 @@ for url in list_urls:
             multiply = sc.calculate_score_list() * sc.calculate_score_dictionary()
 
             ns.readable_page1(row, url, contenttype, sc.keywords_string_curtailed(), sc.calculate_score_list(), sc.calculate_score_dictionary(), multiply, sc.calculate_by_severity(), sc.calculate_weighted_avg(), sc.calculate_by_simultaneity())
+
+            ns.save_sheet()
     except urllib.error.URLError as e:
         forbidden_file.write(str(e) + ' | ' + url)
     except urllib.error.HTTPError as e:    
@@ -76,6 +79,5 @@ for url in list_urls:
     
     url_number += 1
 
-ns.save_sheet()
 list_urls.close()
 forbidden_file.close()
